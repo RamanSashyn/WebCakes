@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.validators import MinValueValidator
-from django.core.validators import MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -17,60 +16,111 @@ class Client(models.Model):
         return f"{self.name} {self.phonenumber}"
 
 
-class Order(models.Model):
-    CAKE_FORMS = {
-        'CIRCLE': 'Круг',
-        'SQUARE': 'Квадрат',
-        'RECTANGLE': 'Прямоугольник',
-    }
-    TOPPINGS = {
-        'NONE': 'Без',
-        'WHITE': 'Белый соус',
-        'CARAMEL': 'Карамельный',
-        'MAPLE': 'Кленовый',
-        'BLUEBERRIES': 'Черника',
-        'MILK_CHOCOLATE': 'Молочный шоколад',
-        'STRAWBERRY': 'Клубника',
-    }
-    BERRIES = {
-        'NONE': 'Без',
-        'BLACKBERRY': 'Ежевика',
-        'RASPBERRY': 'Малина',
-        'BLUEBERRY': 'Голубика',
-        'STRAWBERRY': 'Клубника',
-    }
-    DECOR = {
-        'NONE': 'Без',
-        'PISTACHIOUS': 'Фисташки',
-        'MERINGUE': 'Безе',
-        'HAZELNUT': 'Фундук',
-        'PECANS': 'Пекан',
-        'MARSHMALLOWS': 'Маршмэллоу',
-        'MARZEPAN': 'Марцепан',
-    }
+class Level(models.Model):
+    name = models.CharField('Название', max_length=256)
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)]
+    )
 
+    class Meta:
+        verbose_name = 'Уровень'
+        verbose_name_plural = 'Уровни'
+
+    def __str__(self):
+        return self.name
+
+
+class Form(models.Model):
+    name = models.CharField('Название', max_length=256)
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)]
+    )
+
+    class Meta:
+        verbose_name = 'Форма'
+        verbose_name_plural = 'Формы'
+
+    def __str__(self):
+        return self.name
+
+
+class Topping(models.Model):
+    name = models.CharField('Название', max_length=256)
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)]
+    )
+
+    class Meta:
+        verbose_name = 'Топпинг'
+        verbose_name_plural = 'Топпинги'
+
+    def __str__(self):
+        return self.name
+
+
+class Berry(models.Model):
+    name = models.CharField('Название', max_length=256)
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)]
+    )
+
+    class Meta:
+        verbose_name = 'Ягода'
+        verbose_name_plural = 'Ягоды'
+
+    def __str__(self):
+        return self.name
+
+
+class Decor(models.Model):
+    name = models.CharField('Название', max_length=256)
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)]
+    )
+
+    class Meta:
+        verbose_name = 'Декор'
+        verbose_name_plural = 'Декоры'
+
+    def __str__(self):
+        return self.name
+
+
+class Order(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, verbose_name='Клиент', related_name='orders')
-    levels_amount = models.IntegerField("Количество уровней", validators=[MinValueValidator(0), MaxValueValidator(3)], default=1)
-    form = models.CharField('Форма', choices=CAKE_FORMS, default=CAKE_FORMS['CIRCLE'], max_length=256,)
-    topping = models.CharField('Топпинг', choices=TOPPINGS, default=TOPPINGS['NONE'], max_length=256,)
-    berries = models.CharField('Ягоды', choices=BERRIES, default=BERRIES['NONE'], max_length=256,)
-    decor = models.CharField('Декор', choices=DECOR, default=DECOR['NONE'])
-    sign = models.CharField('Надпись', max_length=256)
-    comment = models.TextField('Комментарий', max_length=500)
+    level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, verbose_name='Количество уровней', related_name='orders')
+    form = models.ForeignKey(Form, on_delete=models.SET_NULL, null=True, verbose_name='Форма', related_name='orders')
+    topping = models.ForeignKey(Topping, on_delete=models.SET_NULL, null=True, verbose_name='Топпинг', related_name='orders')
+    berries = models.ManyToManyField(Berry, blank=True, verbose_name='Ягоды', related_name='orders')
+    decor = models.ManyToManyField(Decor,  blank=True, verbose_name='Декор', related_name='orders')
+    sign = models.CharField('Надпись', max_length=256, blank=True)
+    comment = models.TextField('Комментарий', max_length=500, blank=True)
+    total_price = models.DecimalField(
+        'Итоговая стоимость',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)],
+        default=0.00
+    )
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
     def __str__(self):
-        return f"{self.client} {self.levels_amount}{self.form}{self.topping}"
-
-
-class CakePictures(models.Model):
-    name = models.CharField(max_length=256)
-    picture = models.ImageField(
-        upload_to='place_pictures/',
-    )
-
-    def __str__(self):
-        return f'{self.name}'
+        return f"Заказ {self.pk}"
