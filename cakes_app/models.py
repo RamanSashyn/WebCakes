@@ -106,10 +106,17 @@ class Order(models.Model):
     level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, verbose_name='Количество уровней', related_name='orders')
     form = models.ForeignKey(Form, on_delete=models.SET_NULL, null=True, verbose_name='Форма', related_name='orders')
     topping = models.ForeignKey(Topping, on_delete=models.SET_NULL, null=True, verbose_name='Топпинг', related_name='orders')
-    berries = models.ForeignKey(Berry, on_delete=models.SET_NULL, null=True, verbose_name='Ягоды', related_name='orders')
-    decor = models.ForeignKey(Decor, on_delete=models.SET_NULL, null=True, verbose_name='Декор', related_name='orders')
+    berries = models.ManyToManyField(Berry, blank=True, verbose_name='Ягоды', related_name='orders')
+    decor = models.ManyToManyField(Decor,  blank=True, verbose_name='Декор', related_name='orders')
     sign = models.CharField('Надпись', max_length=256, blank=True)
     comment = models.TextField('Комментарий', max_length=500, blank=True)
+    total_price = models.DecimalField(
+        'Итоговая стоимость',
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.00)],
+        default=0.00
+    )
 
     class Meta:
         verbose_name = 'Заказ'

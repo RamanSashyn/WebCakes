@@ -7,7 +7,16 @@ class ClientAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'pk',
+        'client',
+        'level',
+        'form',
+        'topping',
+        'sign',
+        'total_price',
+    )
+    list_filter = ('level', 'form', 'topping')
 
 @admin.register(Level)
 class LevelAdmin(admin.ModelAdmin):

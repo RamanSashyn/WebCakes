@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
+    path('', views.cake_builder_view, name='index'),
     path('lk/', views.lk, name='lk'),
     path('lk_orders/', views.lk_orders, name='lk_orders'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
