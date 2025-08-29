@@ -1,19 +1,26 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Client(models.Model):
-    name = models.CharField('Имя', max_length=256)
-    phonenumber = PhoneNumberField('Телефон', region='RU')
-    mail = models.CharField('Почта', max_length=256)
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE,
+        related_name='client',
+        verbose_name='Пользователь',
+        null=True, blank=True
+    )
+    name = models.CharField('Имя', max_length=256, blank=True)
+    phonenumber = PhoneNumberField('Телефон', region='RU', unique=True)
+    mail = models.CharField('Почта', max_length=256, blank=True)
 
     class Meta:
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
 
     def __str__(self):
-        return f"{self.name} {self.phonenumber}"
+        return f"{self.name or self.user or ''} {self.phonenumber}"
 
 
 class Level(models.Model):
