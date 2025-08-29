@@ -113,19 +113,33 @@
                 <th>Уровни</th>
                 <th>Форма</th>
                 <th>Топпинг</th>
+                <th>Ягоды</th>
+                <th>Декор</th>
+                <th>Надпись</th>
                 <th>Сумма</th>
               </tr>
             </thead>
             <tbody>
               {% for o in orders %}
                 <tr>
-                  <td>{{ o.id }}</td>
-                  <td>{{ o.level.name }}</td>
-                  <td>{{ o.form.name }}</td>
-                  <td>{% if o.topping %}{{ o.topping.name }}{% else %}-{% endif %}</td>
-                  <td>{{ o.total_price }}₽</td>
+                    <td>{{ o.id }}</td>
+                    <td>{{ o.level|default:"—" }}</td>
+                    <td>{{ o.form|default:"—" }}</td>
+                    <td>{{ o.topping|default:"—" }}</td>
+                    <td>
+                        {% if o.berries.exists %}
+                            {% for b in o.berries.all %}{{ b.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %} — {% endif %}
+                    </td>
+                    <td>
+                        {% if o.decor.exists %}
+                            {% for d in o.decor.all %}{{ d.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% else %} — {% endif %}
+                    </td>
+                    <td>{{ o.sign|default:"—" }}</td>
+                    <td>{{ o.total_price|floatformat:0 }} ₽</td>
                 </tr>
-              {% endfor %}
+                {% endfor %}
             </tbody>
           </table>
         </div>
