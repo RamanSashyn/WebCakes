@@ -101,9 +101,17 @@ li .cake__textinput:read-only {
 .cake__modal {
     border: none;
     max-width: 593px;
-    height: 310px;
+    min-height: 310px;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
+}
+.cake__modal .modal-footer{
+  margin: 0;
+  padding: 0 2rem 1rem;
+}
+.cake__modal .modal-footer p{
+  margin-bottom: 0;
+  text-align: center;
 }
 .from__alert:not(:last-child):after {
     content: ',';
