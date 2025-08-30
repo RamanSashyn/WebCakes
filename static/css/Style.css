@@ -141,3 +141,40 @@ li .cake__textinput:read-only {
 .z-index-1 {
     z-index: -1;
 }
+
+
+.chat-container {
+    padding: 1rem;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.messages-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.assistant-message, .user-message {
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    margin-bottom: 0.5rem;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.assistant-message {
+    background-color: #e6f7ff;
+    color: #333;
+    align-self: flex-start;
+}
+
+.user-message {
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+}

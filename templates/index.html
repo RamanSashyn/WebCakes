@@ -2,189 +2,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	<link rel="stylesheet" href="{% static 'css/Style.css' %}">
-	<!-- Для разработки: -->
-	<script src="https://unpkg.com/vue@3"></script>
-	<!-- Для продакшина: -->
-	<!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script> -->
-	<script src="https://unpkg.com/vee-validate"></script>
-	<title>Тортики</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/Style.css' %}">
+  <!-- Для разработки: -->
+  <script src="https://unpkg.com/vue@3"></script>
+  <!-- Для продакшина: -->
+  <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script> -->
+  <script src="https://unpkg.com/vee-validate"></script>
+  <title>Тортики</title>
 </head>
 <body>
 <header class="navbar navbar-expand-xl navbar-light fixed-top bg-white py-4">
-	<nav class="container">
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<a class="navbar-brand" href="#">
-			<img src="{% static 'img/Logo.svg' %}" alt="CakeBake">
-		</a>
-		<div class="collapse navbar-collapse justify-content-end" id="navbar">
-			<ul class="navbar-nav">
-				<li class="nav-item me-5">
-					<a class="nav-link fw-lighter cake_blue" href="#step3">Создать торт</a>
-				</li>
-				<li class="nav-item me-5">
-					<a class="nav-link fw-lighter cake_blue" href="#step2">Каталог</a>
-				</li>
-				<li class="nav-item me-5">
-					<a class="nav-link fw-lighter cake_blue" href="#step4">Оплата и доставка</a>
-				</li>
-				<li class="nav-item me-5">
-					<a class="nav-link fw-lighter cake_blue" href="#Contacts">Контакты</a>
-				</li>
-				<li class="nav-item d-block d-xl-flex flex-column align-items-end me-5">
-					<small class="fw-lighter text-decoration-none fs_12 cake_blue">8 (495) 000-00-00</small>
-					<small class="fw-lighter text-decoration-none fs_12 cake_blue">Пн - Вс 10:00—20:00</small>
-				</li>
-				<li class="nav-item d-flex align-items-center">
-					<a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#">
-						<img src="{% static 'img/shopping-cart.svg' %}" alt="">
-						<!--метка на иконке, убрать класс d-none чтоб появилась-->
-						<span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none">1</span>
-					</a>
+  <nav class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
+            aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">
+      <img src="{% static 'img/Logo.svg' %}" alt="CakeBake">
+    </a>
+    <div class="collapse navbar-collapse justify-content-end" id="navbar">
+      <ul class="navbar-nav">
+        <li class="nav-item me-5">
+          <a class="nav-link fw-lighter cake_blue" href="#step3">Создать торт</a>
+        </li>
+        <li class="nav-item me-5">
+          <a class="nav-link fw-lighter cake_blue" href="#step2">Каталог</a>
+        </li>
+        <li class="nav-item me-5">
+          <a class="nav-link fw-lighter cake_blue" href="#step4">Оплата и доставка</a>
+        </li>
+        <li class="nav-item me-5">
+          <a class="nav-link fw-lighter cake_blue" href="#Contacts">Контакты</a>
+        </li>
+        <li class="nav-item d-block d-xl-flex flex-column align-items-end me-5">
+          <small class="fw-lighter text-decoration-none fs_12 cake_blue">8 (495) 000-00-00</small>
+          <small class="fw-lighter text-decoration-none fs_12 cake_blue">Пн - Вс 10:00—20:00</small>
+        </li>
+        <li class="nav-item d-flex align-items-center">
+          <a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#">
+            <img src="{% static 'img/shopping-cart.svg' %}" alt="">
+            <!--метка на иконке, убрать класс d-none чтоб появилась-->
+            <span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none">1</span>
+          </a>
 
-					{% if request.user.is_authenticated %}
-                        <a class="nav-link fw-lighter cake_grey fs_12" href="{% url 'lk' %}">
-                            {{ request.user.first_name|default:request.user.username }}
-                        </a>
-                        <a class="nav-link fw-lighter cake_blue fs_12" href="{% url 'logout' %}">Выйти</a>
-                    {% else %}
-                        <a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#RegModal" data-bs-toggle="modal">
-                            <img src="{% static 'img/user.svg' %}" alt="">
-                        </a>
-                    {% endif %}
-				</li>
-			</ul>
-		</div>
-	</nav>
+          {% if request.user.is_authenticated %}
+          <a class="nav-link fw-lighter cake_grey fs_12" href="{% url 'lk' %}">
+            {{ request.user.first_name|default:request.user.username }}
+          </a>
+          <a class="nav-link fw-lighter cake_blue fs_12" href="{% url 'logout' %}">Выйти</a>
+          {% else %}
+          <a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#RegModal" data-bs-toggle="modal">
+            <img src="{% static 'img/user.svg' %}" alt="">
+          </a>
+          {% endif %}
+        </li>
+      </ul>
+    </div>
+  </nav>
 
 </header>
 <main>
-	<div class="container mt-header">
-		<aside class="modal fade" id="RegModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RegModalLabel" aria-hidden="true">
-			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content px-4 cake__modal">
-					<div class="modal-header border-0 pb-0 pt-4">
-						<button type="button" class="btn-close border rounded-pill" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-header border-0 py-0">
-						<label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
-					</div>
-					<form method="post" action="{% url 'login' %}" class="modal-body position-relative d-flex flex-column align-items-center px-5 pb-4">
-                        {% csrf_token %}
-                        {{ login_form.non_field_errors }}
-                        {{ login_form.phone }}
-                        {% for e in login_form.phone.errors %}<div class="text-danger fs_12">{{ e }}</div>{% endfor %}
-                        {{ login_form.password }}
-                        {% for e in login_form.password.errors %}<div class="text-danger fs_12">{{ e }}</div>{% endfor %}
+  <div class="container mt-header">
+    <aside class="modal fade" id="RegModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+           aria-labelledby="RegModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content px-4 cake__modal">
+          <div class="modal-header border-0 pb-0 pt-4">
+            <button type="button" class="btn-close border rounded-pill" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+          </div>
+          <div class="modal-header border-0 py-0">
+            <label for="reg" class="modal-title font_Gogh fs_40 cake_blue" id="RegModalLabel">Вход / Регистрация</label>
+          </div>
+          <form method="post" action="{% url 'login' %}"
+                class="modal-body position-relative d-flex flex-column align-items-center px-5 pb-4">
+            {% csrf_token %}
+            {{ login_form.non_field_errors }}
+            {{ login_form.phone }}
+            {% for e in login_form.phone.errors %}
+            <div class="text-danger fs_12">{{ e }}</div>
+            {% endfor %}
+            {{ login_form.password }}
+            {% for e in login_form.password.errors %}
+            <div class="text-danger fs_12">{{ e }}</div>
+            {% endfor %}
 
-                        <button type="submit" class="btn text-white w-100 rounded-pill mt-1 py-2 shadow-none cake__button fs_12 cake__bg_pink">Войти</button>
+            <button type="submit"
+                    class="btn text-white w-100 rounded-pill mt-1 py-2 shadow-none cake__button fs_12 cake__bg_pink">
+              Войти
+            </button>
 
-                        {% if messages %}
-                            {% for m in messages %}
-                                <small class="fs_12 cake_pink mt-2">{{ m }}</small>
-                            {% endfor %}
-                        {% endif %}
-                    </form>
+            {% if messages %}
+            {% for m in messages %}
+            <small class="fs_12 cake_pink mt-2">{{ m }}</small>
+            {% endfor %}
+            {% endif %}
+          </form>
 
-                    <div class="modal-footer d-flex flex-column justify-content-between align-items-center text-center border-0 mx-5">
-                        <p class="fs_12 cake_grey">
-                            Нажимая на кнопку, вы соглашаетесь на
-                            обработку персональных данных в соответствии с
-                        <a href="{% static 'docs/privacy.pdf' %}" target="_blank" class="text-decoration-none cake_pink">политикой конфиденциальности</a>.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </aside>
+          <div class="modal-footer d-flex flex-column justify-content-between align-items-center text-center border-0 mx-5">
+            <p class="fs_12 cake_grey">
+              Нажимая на кнопку, вы соглашаетесь на
+              обработку персональных данных в соответствии с
+              <a href="{% static 'docs/privacy.pdf' %}" target="_blank" class="text-decoration-none cake_pink">политикой
+                конфиденциальности</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-		<article class="row position-relative">
-			<div class="col-12 col-xxl-6 d-flex justify-content-center">
-				<img src="{% static 'img/Cake.png' %}" alt="">
-			</div>
-			<div class="col-12 col-xxl-6 d-flex flex-column justify-content-center align-items-center align-items-xxl-start">
-				<h1 class="font_Gogh fs_40 cake_blue">Создайте торт своей мечты</h1>
-				<span class="cake_grey fw-lighter">Уникальность и красота в пару кликов</span>
-				<a href="#step3" class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
-			</div>
-			<div class="position-fixed bottom-0 m-5 w-auto end-0">
-				<div class="d-flex">
-					<div class="cake__bg_blue rounded-pill p-3 border">
-						<img src="{% static 'img/intercom.svg' %}" alt="">
-					</div>
-				</div>
-			</div>
-		</article>
+    <article class="row position-relative">
+      <div class="col-12 col-xxl-6 d-flex justify-content-center">
+        <img src="{% static 'img/Cake.png' %}" alt="">
+      </div>
+      <div class="col-12 col-xxl-6 d-flex flex-column justify-content-center align-items-center align-items-xxl-start">
+        <h1 class="font_Gogh fs_40 cake_blue">Создайте торт своей мечты</h1>
+        <span class="cake_grey fw-lighter">Уникальность и красота в пару кликов</span>
+        <a href="#step3"
+           class="btn text-white rounded-pill px-5 mt-3 shadow-none cake__button cake__bg_pink">Создать</a>
+      </div>
+      <div class="position-fixed bottom-0 m-5 w-auto end-0">
+        <div class="d-flex">
+          <div class="cake__bg_blue rounded-pill p-3 border" data-bs-toggle="modal" data-bs-target="#JivoSiteModal"
+               role="button">
+            <img src="{% static 'img/intercom.svg' %}" alt="">
+          </div>
+        </div>
+      </div>
+    </article>
 
-		<article class="row pt-header d-flex justify-content-center" id="step2">
-			<h2 class="font_Gogh fs_40 cake_blue text-center mb-3">По любому поводу</h2>
+    <article class="row pt-header d-flex justify-content-center" id="step2">
+      <h2 class="font_Gogh fs_40 cake_blue text-center mb-3">По любому поводу</h2>
 
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0 cake__hover">
-					<a href="#" class="card-img-overlay"></a>
-					<img src="{% static 'img/image1.png' %}" alt="" class="">
-					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На чаепитие</span>
-				</div>
-			</div>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0 cake__hover">
-					<a href="#" class="card-img-overlay"></a>
-					<img src="{% static 'img/image2.png' %}" alt="" class="">
-					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На день рождения</span>
-				</div>
-			</div>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="card border-0 cake__hover">
-					<a href="#" class="card-img-overlay"></a>
-					<img src="{% static 'img/image3.png' %}" alt="" class="">
-					<span class="cake_blue mt-4 fw-lighter mb-4 text-center">На свадьбу</span>
-				</div>
-			</div>
-			<div class="d-flex justify-content-center mt-2">
-				<button class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Открыть каталог</button>
-			</div>
-		</article>
+      <div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+        <div class="card border-0 cake__hover">
+          <a href="#" class="card-img-overlay"></a>
+          <img src="{% static 'img/image1.png' %}" alt="" class="">
+          <span class="cake_blue mt-4 fw-lighter mb-4 text-center">На чаепитие</span>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+        <div class="card border-0 cake__hover">
+          <a href="#" class="card-img-overlay"></a>
+          <img src="{% static 'img/image2.png' %}" alt="" class="">
+          <span class="cake_blue mt-4 fw-lighter mb-4 text-center">На день рождения</span>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+        <div class="card border-0 cake__hover">
+          <a href="#" class="card-img-overlay"></a>
+          <img src="{% static 'img/image3.png' %}" alt="" class="">
+          <span class="cake_blue mt-4 fw-lighter mb-4 text-center">На свадьбу</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center mt-2">
+        <button class="btn text-white rounded-pill shadow-none cake__button cake__bg_pink">Открыть каталог</button>
+      </div>
+    </article>
 
-		<article class="row pt-header text-center d-flex justify-content-center">
-			<h2 class="font_Gogh fs_40 cake_blue text-center mb-5">Оплата и доставка</h2>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="d-flex align-items-center" style="height: 120px">
-					<img src="{% static 'img/clock.svg' %}" alt="">
-				</div>
-				<span class="cake_blue mt-4 fw-lighter">Изготовление 24 ч.</span>
-				<p class="cake_grey mt-3">Срочный заказ (менее 24 ч.) увеличивает стоимость заказа на 20%</p>
-			</div>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="d-flex align-items-center" style="height: 120px">
-					<img src="{% static 'img/card.svg' %}" alt="">
-				</div>
-				<span class="cake_blue mt-4 fw-lighter">100% предоплата</span>
-				<p class="cake_grey mt-3">Оплата осуществляется банковской картой или в нашем ресторане наличными</p>
-			</div>
-			<div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
-				<div class="d-flex align-items-center" style="height: 120px">
-					<img src="{% static 'img/deliv.svg' %}" alt="">
-				</div>
-				<span class="cake_blue mt-4 fw-lighter">Доставка по Москве</span>
-				<p class="cake_grey mt-3">Готовый заказ доставят по адресу в заявке с 10:00 до 23:00 в пределах МКАД</p>
-			</div>
-			<div class="d-flex justify-content-center">
-				<a href="#step3" class="btn text-white rounded-pill mt-3 shadow-none cake__button cake__bg_pink">Оформить заказ</a>
-			</div>
-		</article>
+    <article class="row pt-header text-center d-flex justify-content-center">
+      <h2 class="font_Gogh fs_40 cake_blue text-center mb-5">Оплата и доставка</h2>
+      <div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+        <div class="d-flex align-items-center" style="height: 120px">
+          <img src="{% static 'img/clock.svg' %}" alt="">
+        </div>
+        <span class="cake_blue mt-4 fw-lighter">Изготовление 24 ч.</span>
+        <p class="cake_grey mt-3">Срочный заказ (менее 24 ч.) увеличивает стоимость заказа на 20%</p>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+        <div class="d-flex align-items-center" style="height: 120px">
+          <img src="{% static 'img/card.svg' %}" alt="">
+        </div>
+        <span class="cake_blue mt-4 fw-lighter">100% предоплата</span>
+        <p class="cake_grey mt-3">Оплата осуществляется банковской картой или в нашем ресторане наличными</p>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 d-flex flex-column align-items-center">
+        <div class="d-flex align-items-center" style="height: 120px">
+          <img src="{% static 'img/deliv.svg' %}" alt="">
+        </div>
+        <span class="cake_blue mt-4 fw-lighter">Доставка по Москве</span>
+        <p class="cake_grey mt-3">Готовый заказ доставят по адресу в заявке с 10:00 до 23:00 в пределах МКАД</p>
+      </div>
+      <div class="d-flex justify-content-center">
+        <a href="#step3" class="btn text-white rounded-pill mt-3 shadow-none cake__button cake__bg_pink">Оформить
+          заказ</a>
+      </div>
+    </article>
 
-		<article id="VueApp">
-			<section class="row pt-header" id="step3">
-				<h2 class="font_Gogh fs_40 cake_blue text-center">Создать свой торт</h2>
+    <article id="VueApp">
+      <section class="row pt-header" id="step3">
+        <h2 class="font_Gogh fs_40 cake_blue text-center">Создать свой торт</h2>
 
-				<form id="cake-form" method="post">
-					{% csrf_token %}
-					<div class="d-flex align-items-center flex-wrap mb-3">
+        <form id="cake-form" method="post">
+          {% csrf_token %}
+          <div class="d-flex align-items-center flex-wrap mb-3">
             <span class="me-3 fs_40 cake_blue">Количество уровней</span>
             {% for level in levels %}
             <input type="radio" name="level" id="level-{{ level.pk }}" value="{{ level.pk }}" class="d-none cake__input"
@@ -232,109 +248,158 @@
             <label for="decor-{{ decor.pk }}" class="mx-2 px-3 py-1 cake_grey cake__label">
               {{ decor.name }} ({{ decor.price }}₽)
             </label>
-							{% endfor %}
-					</div>
-					<div class="row mb-3">
-							<div class="col-5 col-md-4 col-lg-3">
-									<label class="me-3 fs_40 cake_blue" for="words">Надпись</label>
-							</div>
-							<div class="col-7 col-md-8 col-lg-9 pt-2">
-									<input type="text" name="words" id="words" placeholder="Например: «С днем рождения!»..." class="form-control cake__textinput">
-							</div>
-					</div>
-					<div>
-							<label for="comment" class="cake_blue">Комментарий к заказу</label>
-							<textarea name="comment" id="comment" rows="3" class="form-control mt-2 cake__textinput" style="resize: none"></textarea>
-					</div>
-					<section class="row pt-header" id="step4">
-						<div class="col-12">
-							 <h2 class="fs_40 font_Gogh cake_blue text-center">Оформление заказа</h2>
-						</div>
-						<div class="row">
-							<div class="col-12 col-lg-6">
-								<h3 class="fs_30 cake_blue">Данные для доставки</h3>
-								<div class="d-flex flex-column">
-										<label for="id_name" class="my-1 fs_20 cake_blue">Имя</label>
-										<input type="text" name="name" id="id_name" placeholder="Введите ваше имя" class="form-control my-2 cake__textinput">
+            {% endfor %}
+          </div>
+          <div class="row mb-3">
+            <div class="col-5 col-md-4 col-lg-3">
+              <label class="me-3 fs_40 cake_blue" for="words">Надпись</label>
+            </div>
+            <div class="col-7 col-md-8 col-lg-9 pt-2">
+              <input type="text" name="words" id="words" placeholder="Например: «С днем рождения!»..."
+                     class="form-control cake__textinput">
+            </div>
+          </div>
+          <div>
+            <label for="comment" class="cake_blue">Комментарий к заказу</label>
+            <textarea name="comment" id="comment" rows="3" class="form-control mt-2 cake__textinput"
+                      style="resize: none"></textarea>
+          </div>
+          <section class="row pt-header" id="step4">
+            <div class="col-12">
+              <h2 class="fs_40 font_Gogh cake_blue text-center">Оформление заказа</h2>
+            </div>
+            <div class="row">
+              <div class="col-12 col-lg-6">
+                <h3 class="fs_30 cake_blue">Данные для доставки</h3>
+                <div class="d-flex flex-column">
+                  <label for="id_name" class="my-1 fs_20 cake_blue">Имя</label>
+                  <input type="text" name="name" id="id_name" placeholder="Введите ваше имя"
+                         class="form-control my-2 cake__textinput">
 
-										<label for="id_phone" class="my-1 fs_20 cake_blue">Телефон</label>
-										<input type="tel" name="phone" id="id_phone" placeholder="Введите номер" class="form-control my-2 cake__textinput">
+                  <label for="id_phone" class="my-1 fs_20 cake_blue">Телефон</label>
+                  <input type="tel" name="phone" id="id_phone" placeholder="Введите номер"
+                         class="form-control my-2 cake__textinput">
 
-										<label for="id_email" class="my-1 fs_20 cake_blue">Почта</label>
-										<input type="email" name="email" id="id_email" placeholder="Введите почту" class="form-control my-2 cake__textinput">
+                  <label for="id_email" class="my-1 fs_20 cake_blue">Почта</label>
+                  <input type="email" name="email" id="id_email" placeholder="Введите почту"
+                         class="form-control my-2 cake__textinput">
 
-										<label for="id_address" class="my-1 fs_20 cake_blue">Адрес</label>
-										<input type="text" name="address" id="id_address" placeholder="Введите ваш адрес" class="form-control my-2 cake__textinput">
+                  <label for="id_address" class="my-1 fs_20 cake_blue">Адрес</label>
+                  <input type="text" name="address" id="id_address" placeholder="Введите ваш адрес"
+                         class="form-control my-2 cake__textinput">
 
-										<label for="id_date" class="my-1 fs_20 cake_blue">Дата</label>
-										<input type="date" name="date" id="id_date" placeholder="ДД.ММ.ГГ" class="form-control my-2 cake__textinput">
+                  <label for="id_date" class="my-1 fs_20 cake_blue">Дата</label>
+                  <input type="date" name="date" id="id_date" placeholder="ДД.ММ.ГГ"
+                         class="form-control my-2 cake__textinput">
 
-										<label for="id_time" class="my-1 fs_20 cake_blue">Время</label>
-										<input type="time" name="time" id="id_time" placeholder="00:00" class="form-control my-2 cake__textinput">
+                  <label for="id_time" class="my-1 fs_20 cake_blue">Время</label>
+                  <input type="time" name="time" id="id_time" placeholder="00:00"
+                         class="form-control my-2 cake__textinput">
 
-										<label for="id_comment" class="my-1 fs_20 cake_blue">Комментарий для курьера</label>
-										<textarea name="deliv_comment" id="id_comment" class="form-control my-2 cake__textinput" rows="3" style="resize: none"></textarea>
-								</div>
-							</div>
+                  <label for="id_comment" class="my-1 fs_20 cake_blue">Комментарий для курьера</label>
+                  <textarea name="deliv_comment" id="id_comment" class="form-control my-2 cake__textinput" rows="3"
+                            style="resize: none"></textarea>
+                </div>
+              </div>
 
-							<div class="col-12 col-lg-6 d-flex flex-column justify-content-center">
-								<div class="cake__card p-4 position-relative cake_grey">
-										<span id="total-price" class="cake_pink fs_40 fw-bold me-2">Итого: {{ total_price }}₽</span>
-								</div>
-								<div class="d-flex justify-content-end">
-										<button type="submit" class="btn btn_hover text-white rounded-pill mt-3 px-5 shadow-none cake__button cake__bg_pink">К оплате</button>
-								</div>
-							</div>
-					</div>
-					</section>
-				</form>
+              <div class="col-12 col-lg-6 d-flex flex-column justify-content-center">
+                <div class="cake__card p-4 position-relative cake_grey">
+                  <span id="total-price" class="cake_pink fs_40 fw-bold me-2">Итого: {{ total_price }}₽</span>
+                </div>
+                <div class="d-flex justify-content-end">
+                  <button type="submit"
+                          class="btn btn_hover text-white rounded-pill mt-3 px-5 shadow-none cake__button cake__bg_pink">
+                    К оплате
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </form>
 
-			</section>
-		</article>
-	</div>
+      </section>
+    </article>
+  </div>
 </main>
 
 <footer class="mt-5 cake__bg_blue" id="Contacts">
-	<div class="container my-5 py-5">
-		<div class="row">
-			<div class="col-4 col-xl-2 d-flex flex-column">
-				<div>
-					<img src="{% static 'img/Logo.svg' %}" alt="CakeBake" class="mb-2">
-				</div>
-				<small class="text-white fs_12">©2022 CakeBake</small>
-				<small class="text-white fs_12">Все права защищены.</small>
-				<div class="flex-grow-1 d-flex align-items-end">
-					<small class="text-white fs_12">г. Москва,  Большой Козловский пер., д. 12</small>
-				</div>
-			</div>
-			<div class="col-4 col-xl-2 d-flex flex-column">
-				<a href="#" class="text-decoration-none text-white">На свадьбу</a>
-				<a href="#" class="text-decoration-none text-white">На день рождения</a>
-				<a href="#" class="text-decoration-none text-white">На чаепитие</a>
-			</div>
-			<div class="col-4 col-xl-2 d-flex flex-column">
-				<a href="#step3" class="text-decoration-none text-white">Создать торт</a>
-				<a href="#step2" class="text-decoration-none text-white">Каталог</a>
-				<a href="#Contacts" class="text-decoration-none text-white">Контакты</a>
-			</div>
-			<div class="col-12 col-xl-6 d-flex flex-column align-items-start align-items-xl-end mt-3 mt-xl-0">
-				<a href="https://vk.com/devmanorg"><img src="{% static 'img/vk.svg' %}" alt="VK" class="mb-3 mb-xl-5"></a>
-				<small class="text-white fs_12">8 (495) 000-00-00</small>
-				<small class="text-white fs_12">info@cakebake.ru</small>
-				<small class="text-white fs_12">Пн - Вс 10:00—20:00</small>
-			</div>
-		</div>
-	</div>
+  <div class="container my-5 py-5">
+    <div class="row">
+      <div class="col-4 col-xl-2 d-flex flex-column">
+        <div>
+          <img src="{% static 'img/Logo.svg' %}" alt="CakeBake" class="mb-2">
+        </div>
+        <small class="text-white fs_12">©2022 CakeBake</small>
+        <small class="text-white fs_12">Все права защищены.</small>
+        <div class="flex-grow-1 d-flex align-items-end">
+          <small class="text-white fs_12">г. Москва, Большой Козловский пер., д. 12</small>
+        </div>
+      </div>
+      <div class="col-4 col-xl-2 d-flex flex-column">
+        <a href="#" class="text-decoration-none text-white">На свадьбу</a>
+        <a href="#" class="text-decoration-none text-white">На день рождения</a>
+        <a href="#" class="text-decoration-none text-white">На чаепитие</a>
+      </div>
+      <div class="col-4 col-xl-2 d-flex flex-column">
+        <a href="#step3" class="text-decoration-none text-white">Создать торт</a>
+        <a href="#step2" class="text-decoration-none text-white">Каталог</a>
+        <a href="#Contacts" class="text-decoration-none text-white">Контакты</a>
+      </div>
+      <div class="col-12 col-xl-6 d-flex flex-column align-items-start align-items-xl-end mt-3 mt-xl-0">
+        <a href="https://vk.com/devmanorg"><img src="{% static 'img/vk.svg' %}" alt="VK" class="mb-3 mb-xl-5"></a>
+        <small class="text-white fs_12">8 (495) 000-00-00</small>
+        <small class="text-white fs_12">info@cakebake.ru</small>
+        <small class="text-white fs_12">Пн - Вс 10:00—20:00</small>
+      </div>
+    </div>
+  </div>
 </footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<div class="modal fade" id="JivoSiteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+     aria-labelledby="JivoSiteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0 pt-4">
+        <button type="button" class="btn-close border rounded-pill" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body position-relative d-flex flex-column align-items-center text-center" id="initial-message">
+        <h5 class="modal-title font_Gogh fs_20 cake_blue" id="JivoSiteModalLabel">Нужна помощь?</h5>
+        <p class="cake_grey fs_12 mt-2">Вижу, у вас возникли трудности с заказом. Я могу помочь вам?</p>
+      </div>
+      <div class="modal-footer d-flex justify-content-center border-0" id="initial-buttons">
+        <button type="button" class="btn text-white rounded-pill mt-1 py-2 shadow-none cake__button fs_12 cake__bg_pink"
+                id="start-chat-button">Да, нужна помощь
+        </button>
+        <button type="button" class="btn btn-secondary rounded-pill mt-1 py-2 shadow-none cake__button fs_12"
+                data-bs-dismiss="modal">Нет, спасибо
+        </button>
+      </div>
+
+      <div class="chat-container d-none" id="chat-container">
+        <div class="modal-body">
+          <div class="messages-container" id="messages-container">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="text" id="user-input" class="form-control" placeholder="Напишите сообщение...">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 
 <script src="{% static 'js/index.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 {% if show_login_modal or messages %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  new bootstrap.Modal(document.getElementById('RegModal')).show();
-});
+  document.addEventListener('DOMContentLoaded', function () {
+    new bootstrap.Modal(document.getElementById('RegModal')).show();
+  });
 </script>
 {% endif %}
 </body>
