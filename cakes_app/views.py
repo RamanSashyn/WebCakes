@@ -1,13 +1,24 @@
 import re
+import json
+from decimal import Decimal
+from django.http import JsonResponse
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
-from .models import Level, Form, Topping, Berry, Decor, Client, Order
+
+from .models import Level, Form, Topping, Berry, Decor, Client, Order, PromoCode
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from .forms import PhoneLoginForm, ProfileForm
 from django.db import transaction
+from .serializers import PromoCodeSerializer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 
@@ -37,18 +48,36 @@ def index(request: HttpRequest) -> HttpResponse:
         time = request.POST.get('time')
         deliv_comment = request.POST.get('deliv_comment')
 
-        total_price = 0
+        total_price = Decimal(0)
 
-        if level_id:
-            total_price += Level.objects.get(pk=level_id).price
-        if form_id:
-            total_price += Form.objects.get(pk=form_id).price
-        if topping_id:
-            total_price += Topping.objects.get(pk=topping_id).price
-        for berry_id in berry_ids:
-            total_price += Berry.objects.get(pk=berry_id).price
-        for decor_id in decor_ids:
-            total_price += Decor.objects.get(pk=decor_id).price
+        try:
+            if level_id:
+                total_price += get_object_or_404(Level, pk=level_id).price
+            if form_id:
+                total_price += get_object_or_404(Form, pk=form_id).price
+            if topping_id:
+                total_price += get_object_or_404(Topping, pk=topping_id).price
+
+            selected_berries = Berry.objects.filter(pk__in=berry_ids)
+            for berry in selected_berries:
+                total_price += berry.price
+
+            selected_decors = Decor.objects.filter(pk__in=decor_ids)
+            for decor in selected_decors:
+                total_price += decor.price
+        except Exception as e:
+            return redirect('index')
+
+        promo_code_value = request.POST.get('promo_code', None)
+
+        if promo_code_value:
+            try:
+                promo = PromoCode.objects.get(code__iexact=promo_code_value, is_active=True)
+                discount_percentage = promo.discount
+                discount_factor = Decimal('1') - (discount_percentage / Decimal('100'))
+                total_price = total_price * discount_factor
+            except PromoCode.DoesNotExist:
+                pass
 
         client, created = Client.objects.get_or_create(
             phonenumber=phone,
@@ -59,12 +88,13 @@ def index(request: HttpRequest) -> HttpResponse:
         )
         new_order = Order.objects.create(
             client=client,
-            level=Level.objects.get(pk=level_id),
-            form=Form.objects.get(pk=form_id),
-            topping=Topping.objects.get(pk=topping_id),
+            level=get_object_or_404(Level, pk=level_id),
+            form=get_object_or_404(Form, pk=form_id),
+            topping=get_object_or_404(Topping, pk=topping_id),
             sign=words,
             comment=comment,
             total_price=total_price,
+            promo_code=promo_code_value,
         )
         new_order.berries.set(Berry.objects.filter(pk__in=berry_ids))
         new_order.decor.set(Decor.objects.filter(pk__in=decor_ids))
@@ -255,83 +285,41 @@ def find_user_by_candidates(raw: str):
             return u
     return None
 
+# @csrf_exempt
+# @require_POST
+# def apply_promo_code(request):
+#     try:
+#         data = json.loads(request.body)
+#         code = data.get('code')
+#         if not code:
+#             return JsonResponse({'success': False, 'message': 'Промокод не указан.'})
+#
+#         try:
+#             promo_code = PromoCode.objects.get(code__iexact=code, is_active=True)
+#             return JsonResponse({'success': True, 'discount': str(promo_code.discount)})
+#         except PromoCode.DoesNotExist:
+#             return JsonResponse({'success': False, 'message': 'Промокод недействителен или неактивен.'})
+#
+#     except json.JSONDecodeError:
+#         return JsonResponse({'success': False, 'message': 'Неверный формат данных.'})
 
-# def cake_builder_view(request: HttpRequest) -> HttpResponse:
-#     levels = Level.objects.all()
-#     forms = Form.objects.all()
-#     toppings = Topping.objects.all()
-#     berries = Berry.objects.all()
-#     decors = Decor.objects.all()
-#
-#     if request.method == 'POST':
-#         level_id = request.POST.get('level')
-#         form_id = request.POST.get('form')
-#         topping_id = request.POST.get('topping')
-#         form_id = request.POST.get('form')
-#         topping_id = request.POST.get('topping')
-#         berry_ids = request.POST.getlist('berries')
-#         decor_ids = request.POST.getlist('decor')
-#         words = request.POST.get('words')
-#         comment = request.POST.get('comment')
-#
-#         name = request.POST.get('name')
-#         phone = request.POST.get('phone')
-#         email = request.POST.get('email')
-#         address = request.POST.get('address')
-#         date = request.POST.get('date')
-#         time = request.POST.get('time')
-#         deliv_comment = request.POST.get('deliv_comment')
-#
-#         total_price = 0
-#
-#         if level_id:
-#             level = Level.objects.get(pk=level_id)
-#             total_price += level.price
-#
-#         if form_id:
-#             form = Form.objects.get(pk=form_id)
-#             total_price += form.price
-#
-#         if topping_id:
-#             topping = Topping.objects.get(pk=topping_id)
-#             total_price += topping.price
-#
-#         for berry_id in berry_ids:
-#             berry = Berry.objects.get(pk=berry_id)
-#             total_price += berry.price
-#
-#         for decor_id in decor_ids:
-#             decor = Decor.objects.get(pk=decor_id)
-#             total_price += decor.price
-#
-#         client, created = Client.objects.get_or_create(
-#             phonenumber=phone,
-#             defaults={
-#                 'name': name,
-#                 'mail': email
-#             }
-#         )
-#         new_order = Order.objects.create(
-#             client=client,
-#             level=Level.objects.get(pk=level_id),
-#             form=Form.objects.get(pk=form_id),
-#             topping=Topping.objects.get(pk=topping_id),
-#             sign=words,
-#             comment=comment,
-#             total_price=total_price,
-#         )
-#
-#         new_order.berries.set(Berry.objects.filter(pk__in=berry_ids))
-#         new_order.decor.set(Decor.objects.filter(pk__in=decor_ids))
-#
-#     context = {
-#         'levels': levels,
-#         'forms': forms,
-#         'toppings': toppings,
-#         'berries': berries,
-#         'decors': decors,
-#     }
-#
-#
-#
-#     return render(request, 'index.html', context)
+
+@api_view(['POST'])
+def apply_promo_function_based_view(request):
+    serializer = PromoCodeSerializer(data=request.data)
+    if serializer.is_valid():
+        promo_code_value = serializer.validated_data.get('code')
+
+        try:
+            promo = PromoCode.objects.get(code__iexact=promo_code_value, is_active=True)
+            return Response({
+                "success": True,
+                "discount": promo.discount
+            }, status=status.HTTP_200_OK)
+        except PromoCode.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": "Промокод не найден или неактивен."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

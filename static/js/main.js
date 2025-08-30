@@ -1,17 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Код для калькулятора цены ---
     const form = document.getElementById('cake-form');
     const totalPriceElement = document.getElementById('total-price');
 
+    // Объявляем функцию updateTotalPrice.
+    // Переменная для хранения скидки.
+    let currentDiscount = 0;
+
     const updateTotalPrice = () => {
         let totalPrice = 0;
+        if (form) {
+            form.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked')
+                .forEach(el => {
+                    const price = Number(el.dataset.price || 0);
+                    if (!Number.isNaN(price)) totalPrice += price;
+                });
+        }
 
-        form.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked')
-            .forEach(el => {
-                const price = Number(el.dataset.price || 0);
-                if (!Number.isNaN(price)) totalPrice += price;
-            });
+        // Применяем скидку к общей цене.
+        totalPrice = totalPrice * (1 - currentDiscount / 100);
 
-        totalPriceElement.textContent = `Итого: ${totalPrice.toLocaleString('ru-RU')}₽`;
+        if (totalPriceElement) {
+            totalPriceElement.textContent = `Итого: ${totalPrice.toLocaleString('ru-RU')}₽`;
+        }
     };
 
     if (form && totalPriceElement) {
@@ -19,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('change', updateTotalPrice);
     }
 
+    // --- Логика для JivoSite ---
     let inactivityTimer;
     const inactivityDuration = 20000;
     let jivoSiteModalShown = false;
@@ -97,4 +109,49 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // --- Логика для промокода ---
+    const applyPromoButton = document.getElementById('apply-promo-button');
+    const promoCodeInput = document.getElementById('promo-code-input');
+    const promoCodeMessage = document.getElementById('promo-code-message');
+
+    if (applyPromoButton) {
+        applyPromoButton.addEventListener('click', async () => {
+            const promoCode = promoCodeInput.value.trim();
+            if (promoCode === '') {
+                promoCodeMessage.textContent = 'Введите промокод.';
+                promoCodeMessage.style.color = 'red';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/apply_promo/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrf_token
+                    },
+                    body: JSON.stringify({ code: promoCode })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentDiscount = parseFloat(data.discount);
+                    promoCodeMessage.textContent = `Скидка ${currentDiscount}% применена!`;
+                    promoCodeMessage.style.color = 'green';
+                } else {
+                    currentDiscount = 0;
+                    promoCodeMessage.textContent = data.message;
+                    promoCodeMessage.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+                promoCodeMessage.textContent = 'Произошла ошибка, попробуйте позже.';
+                promoCodeMessage.style.color = 'red';
+            }
+            updateTotalPrice();
+        });
+    }
+
 });
