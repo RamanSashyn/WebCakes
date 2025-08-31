@@ -70,14 +70,14 @@ class BerryAdmin(admin.ModelAdmin):
 
 @admin.register(Decor)
 class DecorAdmin(admin.ModelAdmin):
-    pass
+    list_display = (
+        'name',
+        'price',
+    )
+    list_filter = ('name', 'price')
+    search_fields = ['name',]
+    list_editable = ['price']
 
-
-
-
-
-
-  
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
     list_display = ('code', 'discount', 'is_active')
