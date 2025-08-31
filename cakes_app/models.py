@@ -20,7 +20,7 @@ class Client(models.Model):
         verbose_name_plural = 'Клиенты'
 
     def __str__(self):
-        return f"{self.name or self.user or ''} {self.phonenumber}"
+        return f"{self.name or self.user or ''} {self.phonenumber} {self.mail}"
 
 
 class Level(models.Model):
