@@ -302,12 +302,20 @@
                 </div>
               </div>
 
+              <div class="col-12 mt-4">
+                <div class="input-group">
+                  <input type="text" id="promo-code-input" name="promo_code" class="form-control" placeholder="Введите промокод" aria-label="Промокод">
+                  <button class="btn btn-outline-secondary" type="button" id="apply-promo-button">Применить</button>
+                </div>
+                <div id="promo-code-message" class="text-danger mt-2"></div>
+              </div>
+
               <div class="col-12 col-lg-6 d-flex flex-column justify-content-center">
                 <div class="cake__card p-4 position-relative cake_grey">
                   <span id="total-price" class="cake_pink fs_40 fw-bold me-2">Итого: {{ total_price }}₽</span>
                 </div>
                 <div class="d-flex justify-content-end">
-                  <button type="submit"
+                  <button type="submit" id="submit-order-button"
                           class="btn btn_hover text-white rounded-pill mt-3 px-5 shadow-none cake__button cake__bg_pink">
                     К оплате
                   </button>
@@ -392,7 +400,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-
+<script>
+  const csrf_token = "{{ csrf_token }}";
+</script>
 <script src="{% static 'js/index.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
 {% if show_login_modal or messages %}

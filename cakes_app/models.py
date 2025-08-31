@@ -124,6 +124,7 @@ class Order(models.Model):
         validators=[MinValueValidator(0.00)],
         default=0.00
     )
+    promo_code = models.CharField(max_length=20, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Заказ'
@@ -131,3 +132,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Заказ {self.pk}"
+
+
+class PromoCode(models.Model):
+    code = models.CharField(max_length=20, unique=True, verbose_name="Промокод")
+    discount = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Скидка (%)")
+    is_active = models.BooleanField(default=True, verbose_name="Активен")
+
+    def __str__(self):
+        return self.code

@@ -19,6 +19,7 @@ from django.urls import path
 from cakes_app import views
 from django.conf import settings
 from django.conf.urls.static import static
+from cakes_app.views import apply_promo_function_based_view
 
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     path('lk_orders/', views.lk_orders, name='lk_orders'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('api/apply_promo/', apply_promo_function_based_view, name='apply_promo_code'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Client, Order, Level, Form, Topping, Berry, Decor
+from .models import Client, Order, Level, Form, Topping, Berry, Decor, PromoCode
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
@@ -70,10 +70,16 @@ class BerryAdmin(admin.ModelAdmin):
 
 @admin.register(Decor)
 class DecorAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'price',
-    )
-    list_filter = ('name', 'price')
-    search_fields = ['name',]
-    list_editable = ['price']
+    pass
+
+
+
+
+
+
+  
+@admin.register(PromoCode)
+class PromoCodeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'discount', 'is_active')
+    list_filter = ('is_active',)
+    search_fields = ('code',)
