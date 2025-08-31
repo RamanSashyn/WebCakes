@@ -1,10 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Код для калькулятора цены ---
     const form = document.getElementById('cake-form');
     const totalPriceElement = document.getElementById('total-price');
+    const promoCodeInput = document.getElementById('promo-code-input');
+    const promoCodeMessage = document.getElementById('promo-code-message');
+    const applyPromoButton = document.getElementById('apply-promo-button');
+    const submitOrderButton = document.getElementById('submit-order-button');
 
-    // Объявляем функцию updateTotalPrice.
-    // Переменная для хранения скидки.
     let currentDiscount = 0;
 
     const updateTotalPrice = () => {
@@ -17,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         }
 
-        // Применяем скидку к общей цене.
         totalPrice = totalPrice * (1 - currentDiscount / 100);
 
         if (totalPriceElement) {
@@ -25,12 +25,84 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    if (form && totalPriceElement) {
-        updateTotalPrice();
-        form.addEventListener('change', updateTotalPrice);
+    const applyPromoCode = async () => {
+        const promoCode = promoCodeInput.value.trim();
+        if (promoCode === '') {
+            promoCodeMessage.textContent = 'Введите промокод.';
+            promoCodeMessage.style.color = 'red';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/apply_promo/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrf_token
+                },
+                body: JSON.stringify({ code: promoCode })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                currentDiscount = parseFloat(data.discount);
+                promoCodeMessage.textContent = `Скидка ${currentDiscount}% применена!`;
+                promoCodeMessage.style.color = 'green';
+            } else {
+                currentDiscount = 0;
+                promoCodeMessage.textContent = data.message;
+                promoCodeMessage.style.color = 'red';
+            }
+        } catch (error) {
+            console.error('Ошибка при отправке запроса:', error);
+            promoCodeMessage.textContent = 'Произошла ошибка, попробуйте позже.';
+            promoCodeMessage.style.color = 'red';
+            currentDiscount = 0;
+        } finally {
+            updateTotalPrice();
+        }
+    };
+
+    const checkRequiredFields = () => {
+        const isLevelSelected = form.querySelector('input[name="level"]:checked');
+        const isFormSelected = form.querySelector('input[name="form"]:checked');
+        const isToppingSelected = form.querySelector('input[name="topping"]:checked');
+
+        if (isLevelSelected && isFormSelected && isToppingSelected) {
+            submitOrderButton.disabled = false;
+        } else {
+            submitOrderButton.disabled = true;
+        }
+    };
+
+    if (form) {
+        form.addEventListener('change', () => {
+            updateTotalPrice();
+            checkRequiredFields(); // <-- Добавьте эту строку
+        });
     }
 
-    // --- Логика для JivoSite ---
+    if (form) {
+        form.addEventListener('submit', async (event) => {
+            if (document.activeElement === promoCodeInput) {
+                event.preventDefault();
+                await applyPromoCode();
+            }
+        });
+    }
+
+    if (applyPromoButton) {
+        applyPromoButton.addEventListener('click', async (event) => {
+            event.preventDefault();
+            await applyPromoCode();
+        });
+    }
+
+    if (form && totalPriceElement) {
+        updateTotalPrice();
+        checkRequiredFields();
+    }
+
     let inactivityTimer;
     const inactivityDuration = 20000;
     let jivoSiteModalShown = false;
@@ -107,50 +179,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 600);
                 userInput.value = '';
             }
-        });
-    }
-
-    // --- Логика для промокода ---
-    const applyPromoButton = document.getElementById('apply-promo-button');
-    const promoCodeInput = document.getElementById('promo-code-input');
-    const promoCodeMessage = document.getElementById('promo-code-message');
-
-    if (applyPromoButton) {
-        applyPromoButton.addEventListener('click', async () => {
-            const promoCode = promoCodeInput.value.trim();
-            if (promoCode === '') {
-                promoCodeMessage.textContent = 'Введите промокод.';
-                promoCodeMessage.style.color = 'red';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/apply_promo/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrf_token
-                    },
-                    body: JSON.stringify({ code: promoCode })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    currentDiscount = parseFloat(data.discount);
-                    promoCodeMessage.textContent = `Скидка ${currentDiscount}% применена!`;
-                    promoCodeMessage.style.color = 'green';
-                } else {
-                    currentDiscount = 0;
-                    promoCodeMessage.textContent = data.message;
-                    promoCodeMessage.style.color = 'red';
-                }
-            } catch (error) {
-                console.error('Ошибка при отправке запроса:', error);
-                promoCodeMessage.textContent = 'Произошла ошибка, попробуйте позже.';
-                promoCodeMessage.style.color = 'red';
-            }
-            updateTotalPrice();
         });
     }
 
