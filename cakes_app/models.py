@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from phonenumber_field.modelfields import PhoneNumberField
+from django.utils import timezone
 
 
 class Client(models.Model):
@@ -124,7 +125,11 @@ class Order(models.Model):
         validators=[MinValueValidator(0.00)],
         default=0.00
     )
+    address = models.CharField('Адрес доставки', max_length=256, blank=True)
+    date = models.DateField('Дата', default=timezone.now)
+    time = models.TimeField('Время', default=timezone.now)
     promo_code = models.CharField(max_length=20, null=True, blank=True)
+    deliv_comment = models.TextField('Комментарий к доставке', max_length=500, blank=True)
 
     class Meta:
         verbose_name = 'Заказ'
@@ -139,5 +144,9 @@ class PromoCode(models.Model):
     discount = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Скидка (%)")
     is_active = models.BooleanField(default=True, verbose_name="Активен")
 
+    class Meta:
+        verbose_name = 'Промокод'
+        verbose_name_plural = 'Промокоды'
+
     def __str__(self):
-        return self.code
+        return f"{self.code} {self.discount}"

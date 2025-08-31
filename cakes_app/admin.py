@@ -81,5 +81,5 @@ class DecorAdmin(admin.ModelAdmin):
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
     list_display = ('code', 'discount', 'is_active')
-    list_filter = ('is_active',)
-    search_fields = ('code',)
+    search_fields = ('code', 'discount')
+    list_editable = ['discount', 'is_active']
