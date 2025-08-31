@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         }
 
+        const inscriptionInput = document.getElementById('words');
+        if (inscriptionInput && inscriptionInput.value.trim() !== '') {
+            totalPrice += 500;
+        }
+
         totalPrice = totalPrice * (1 - currentDiscount / 100);
 
         if (totalPriceElement) {
@@ -78,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('change', () => {
             updateTotalPrice();
-            checkRequiredFields(); // <-- Добавьте эту строку
+            checkRequiredFields();
         });
     }
 
