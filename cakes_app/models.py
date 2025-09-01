@@ -126,8 +126,8 @@ class Order(models.Model):
         default=0.00
     )
     address = models.CharField('Адрес доставки', max_length=256, blank=True)
-    date = models.DateField('Дата', default=timezone.now)
-    time = models.TimeField('Время', default=timezone.now)
+    date = models.DateField('Дата', blank=True)
+    time = models.TimeField('Время', blank=True)
     promo_code = models.CharField(max_length=20, null=True, blank=True)
     deliv_comment = models.TextField('Комментарий к доставке', max_length=500, blank=True)
 

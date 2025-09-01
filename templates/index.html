@@ -204,7 +204,7 @@
             <span class="me-3 fs_40 cake_blue">Количество уровней</span>
             {% for level in levels %}
             <input type="radio" name="level" id="level-{{ level.pk }}" value="{{ level.pk }}" class="d-none cake__input"
-                   data-price="{{ level.price }}">
+                   data-price="{{ level.price }}" required>
             <label for="level-{{ level.pk }}" class="mx-2 px-3 py-1 cake_grey cake__label">
               {{ level.name }} ({{ level.price }}₽)
             </label>
@@ -214,7 +214,7 @@
             <span class="me-3 fs_40 cake_blue">Форма</span>
             {% for form in forms %}
             <input type="radio" name="form" id="form-{{ form.pk }}" value="{{ form.pk }}" class="d-none cake__input"
-                   data-price="{{ form.price }}">
+                   data-price="{{ form.price }}" required>
             <label for="form-{{ form.pk }}" class="mx-2 px-3 py-1 cake_grey cake__label">
               {{ form.name }} ({{ form.price }}₽)
             </label>
@@ -224,7 +224,7 @@
             <span class="me-3 fs_40 cake_blue">Топпинг</span>
             {% for topping in toppings %}
             <input type="radio" name="topping" id="topping-{{ topping.pk }}" value="{{ topping.pk }}"
-                   class="d-none cake__input" data-price="{{ topping.price }}">
+                   class="d-none cake__input" data-price="{{ topping.price }}" required>
             <label for="topping-{{ topping.pk }}" class="mx-2 px-3 py-1 cake_grey cake__label">
               {{ topping.name }} ({{ topping.price }}₽)
             </label>
@@ -274,11 +274,11 @@
                 <div class="d-flex flex-column">
                   <label for="id_name" class="my-1 fs_20 cake_blue">Имя</label>
                   <input type="text" name="name" id="id_name" placeholder="Введите ваше имя"
-                         class="form-control my-2 cake__textinput">
+                         class="form-control my-2 cake__textinput" requredd>
 
                   <label for="id_phone" class="my-1 fs_20 cake_blue">Телефон</label>
                   <input type="tel" name="phone" pattern="[+][0-9]{11}" title="Введите номер телефона в формате +7..." id="id_phone" placeholder="Введите номер"
-                         class="form-control my-2 cake__textinput">
+                         class="form-control my-2 cake__textinput" required>
 
                   <label for="id_email" class="my-1 fs_20 cake_blue">Почта</label>
                   <input type="email"  name="email"  id="id_email"  placeholder="Введите почту"
@@ -286,15 +286,15 @@
 
                   <label for="id_address" class="my-1 fs_20 cake_blue">Адрес</label>
                   <input type="text" name="address" id="id_address" placeholder="Введите ваш адрес"
-                         class="form-control my-2 cake__textinput">
+                         class="form-control my-2 cake__textinput" required>
 
                   <label for="id_date" class="my-1 fs_20 cake_blue">Дата</label>
                   <input type="date" name="date" id="id_date" placeholder="ДД.ММ.ГГ"
-                         class="form-control my-2 cake__textinput">
+                         class="form-control my-2 cake__textinput" required>
 
                   <label for="id_time" class="my-1 fs_20 cake_blue">Время</label>
                   <input type="time" name="time" id="id_time" placeholder="00:00"
-                         class="form-control my-2 cake__textinput">
+                         class="form-control my-2 cake__textinput" required>
 
                   <label for="id_comment" class="my-1 fs_20 cake_blue">Комментарий для курьера</label>
                   <textarea name="deliv_comment" id="id_comment" class="form-control my-2 cake__textinput" rows="3"
