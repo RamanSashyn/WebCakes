@@ -97,6 +97,10 @@ def index(request: HttpRequest) -> HttpResponse:
             comment=comment,
             total_price=total_price,
             promo_code=promo_code_value,
+            address=address,
+            date=date,
+            time=time,
+            deliv_comment=deliv_comment,
         )
         new_order.berries.set(Berry.objects.filter(pk__in=berry_ids))
         new_order.decor.set(Decor.objects.filter(pk__in=decor_ids))
@@ -178,7 +182,7 @@ def lk(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST)
         if form.is_valid():
-            name  = form.cleaned_data['name'].strip()
+            name = form.cleaned_data['name'].strip()
             phone = normalize_plus7(form.cleaned_data['phone'])
             email = form.cleaned_data['email'].strip()
 
