@@ -67,13 +67,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'WebCakes.wsgi.application'
 
-
-SQLITE_PATH = os.getenv("DJANGO_SQLITE_PATH", BASE_DIR / "db.sqlite3")
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': SQLITE_PATH,
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
