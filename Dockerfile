@@ -5,14 +5,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY requirements.txt .
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY . /app/
 
-RUN python manage.py collectstatic --noinput || true
-
-EXPOSE 8000
-
-CMD bash -lc "python manage.py migrate --noinput && \
-              gunicorn WebCakes.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+ENV PORT=8000
+CMD python manage.py migrate --noinput \
+ && python manage.py collectstatic --noinput \
+ && gunicorn WebCakes.wsgi:application --bind 0.0.0.0:$PORT

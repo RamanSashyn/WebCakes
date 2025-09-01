@@ -8,3 +8,4 @@ python-dotenv>=1.0
 django-phonenumber-field==8.1.0
 phonenumbers==9.0.10
 djangorestframework==3.16.1
+whitenoise==6.6.0
