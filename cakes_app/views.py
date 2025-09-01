@@ -37,7 +37,7 @@ def index(request: HttpRequest) -> HttpResponse:
         topping_id = request.POST.get('topping')
         berry_ids = request.POST.getlist('berries')
         decor_ids = request.POST.getlist('decor')
-        words = request.POST.get('words')
+        inscription = request.POST.get('sign')
         comment = request.POST.get('comment')
 
         name = request.POST.get('name')
@@ -51,6 +51,8 @@ def index(request: HttpRequest) -> HttpResponse:
         total_price = Decimal(0)
 
         try:
+            if inscription:
+                total_price += Decimal('500.00')
             if level_id:
                 total_price += get_object_or_404(Level, pk=level_id).price
             if form_id:
@@ -91,7 +93,7 @@ def index(request: HttpRequest) -> HttpResponse:
             level=get_object_or_404(Level, pk=level_id),
             form=get_object_or_404(Form, pk=form_id),
             topping=get_object_or_404(Topping, pk=topping_id),
-            sign=words,
+            sign=inscription,
             comment=comment,
             total_price=total_price,
             promo_code=promo_code_value,

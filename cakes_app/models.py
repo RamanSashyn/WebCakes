@@ -131,6 +131,7 @@ class Order(models.Model):
     promo_code = models.CharField(max_length=20, null=True, blank=True)
     deliv_comment = models.TextField('Комментарий к доставке', max_length=500, blank=True)
 
+
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
